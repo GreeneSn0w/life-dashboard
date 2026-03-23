@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charlie Greene â Dashboard</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --card: #ffffff;
+    --card-hover: #f8f7f4;
+    --border: #e8e5df;
+    --text: #2d2d2d;
+    --muted: #8a8580;
+    --accent: #6c8cbf;
+    --green: #7cba9c;
+    --yellow: #d4b968;
+    --red: #d4806a;
+    --orange: #d4a06a;
+    --purple: #9b8ec4;
+    --pink: #c98bad;
+    --light-blue: #a3c4d9;
+    --warm-bg: #f5f2ed;
+    --warm-border: #e0dbd4;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --shadow-hover: 0 2px 6px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ââ Navigation ââ */
+  .tab-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,249,246,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
+  .tab-btn {
+    padding: 16px 36px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    position: relative;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .page { display: none; padding: 40px 24px 100px; max-width: 960px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* ââ Header ââ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 40px 0 32px;
+  }
+  .page-header h1 {
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .page-header .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ââ North Star ââ */
+  .north-star {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #f0ede7, #e8e4dc);
+    border-radius: 16px;
+    border: 1px solid var(--warm-border);
+  }
+  .north-star .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .north-star .message {
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ââ Cards ââ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  /* ââ Beliefs ââ */
+  .belief-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 700px) { .belief-grid { grid-template-columns: 1fr; } }
+  .belief-item {
+    padding: 18px 20px;
+    background: var(--warm-bg);
+    border-radius: 12px;
+    border: 1px solid var(--warm-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .belief-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .belief-num {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    margin-bottom: 6px;
+  }
+  .belief-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .belief-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* ââ Goals ââ */
+  .goals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .goals-grid { grid-template-columns: 1fr; } }
+
+  .goal-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .goal-info { flex: 1; }
+  .goal-name { font-size: 14px; font-weight: 600; color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+  .goal-target { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+  .goal-done .goal-name { text-decoration: line-through; color: var(--muted); }
+
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--warm-bg);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: right;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  /* ââ Vision Cards ââ */
+  .vision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .vision-grid { grid-template-columns: 1fr; } }
+  .vision-card {
+    padding: 24px;
+    background: var(--warm-bg);
+    border-radius: 14px;
+    border: 1px solid var(--warm-border);
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+  .vision-card:hover { transform: translateY(-2px); }
+  .vision-icon { font-size: 28px; margin-bottom: 12px; }
+  .vision-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .vision-detail { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+  .vision-accent { font-size: 12px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
+
+  /* ââ Daily Page ââ */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding: 16px 0;
+  }
+  .date-nav button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+  .date-nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .date-nav .current-date {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 240px;
+    text-align: center;
+  }
+  .date-nav input[type="date"] {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  /* ââ Yesterday Summary ââ */
+  .yesterday-summary {
+    background: linear-gradient(135deg, #eef3f8, #e8edf5);
+    border: 1px solid #d4dde8;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+  }
+  .yesterday-summary h3 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+  }
+  .yesterday-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+  .yesterday-stat {
+    text-align: center;
+    padding: 10px;
+  }
+  .yesterday-stat .val {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .yesterday-stat .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .yesterday-empty {
+    text-align: center;
+    color: var(--muted);
+    font-style: italic;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* ââ Intention ââ */
+  .intention-box {
+    background: linear-gradient(135deg, #f5f0ea, #ede7df);
+    border: 1px solid var(--warm-border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .intention-box label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+  }
+  .intention-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--warm-border);
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    background: rgba(255,255,255,0.7);
+    color: var(--text);
+    text-align: center;
+  }
+  .intention-input:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+  /* ââ Check-in ââ */
+  .checkin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) { .checkin-grid { grid-template-columns: 1fr; } }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row label {
+    font-size: 14px;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  .rating-selector { display: flex; gap: 3px; }
+  .rating-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--warm-bg);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+  }
+  .rating-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .rating-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .checkbox-item:last-child { border-bottom: none; }
+  .chk {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .chk.checked {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .chk.checked::after {
+    content: '\2713';
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .checkbox-item .chk-label {
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .checkbox-item.is-checked .chk-label {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  /* ââ Journal ââ */
+  .journal-area {
+    width: 100%;
+    background: var(--warm-bg);
+    border: 1px solid var(--warm-border);
+    color: var(--text);
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+  .journal-area:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .journal-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  /* ââ Misc Page ââ */
+  input[type="number"], input[type="text"] {
+    background: var(--warm-bg);
+    border: 1px solid var(--warm-border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100px;
+    text-align: right;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  input[type="text"] { width: 220px; text-align: left; }
+  input:focus { outline: none; border-color: var(--accent); }
+
+  /* ââ Save Bar ââ */
+  .save-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(250,249,246,0.92);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    z-index: 100;
+  }
+  .btn {
+    padding: 10px 28px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #5a7aad; }
+  .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); }
+  .save-status {
+    font-size: 12px;
+    color: var(--green);
+    align-self: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  .save-status.visible { opacity: 1; }
+
+  /* ââ Quote ââ */
+  .daily-quote {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 28px;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .daily-quote .attr {
+    margin-top: 6px;
+    font-size: 12px;
+    font-style: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 80px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<!-- âââââââ TAB BAR âââââââ -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('vision')">Vision</button>
+  <button class="tab-btn" onclick="switchTab('daily')">Daily</button>
+  <button class="tab-btn" onclick="switchTab('misc')">Misc</button>
+  <button class="tab-btn" onclick="switchTab('calendar')">Calendar</button>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- âââââââ PAGE 1 â VISION âââââââââââââââââââââââ -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page active" id="page-vision">
+
+  <div class="page-header">
+    <h1>Charlie Greene</h1>
+    <div class="subtitle">Clarity &amp; Progress</div>
+  </div>
+
+  <div class="north-star">
+    <div class="label">North Star</div>
+    <div class="message">Build a stable, disciplined life. Discipline is the foundation; wealth and freedom are the byproducts.</div>
+  </div>
+
+  <!-- CORE BELIEFS -->
+  <div class="card">
+    <h2>Core Beliefs</h2>
+    <div class="belief-grid">
+      <div class="belief-item">
+        <div class="belief-num">01</div>
+        <div class="belief-title">Meaning comes from building, improving, and moving forward.</div>
+        <div class="belief-sub">Stagnation is the enemy â not failure.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">02</div>
+        <div class="belief-title">Current struggles do not cancel long-term upside.</div>
+        <div class="belief-sub">A hard chapter isn't the whole story.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">03</div>
+        <div class="belief-title">Aligned relationships come from keeping promises to yourself first.</div>
+        <div class="belief-sub">Show up for others by keeping your own word.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">04</div>
+        <div class="belief-title">Pain should become fuel, not identity.</div>
+        <div class="belief-sub">Use it. Don't become it.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">05</div>
+        <div class="belief-title">Build a life I actually respect.</div>
+        <div class="belief-sub">Not one that looks good â one I'm proud of.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">06</div>
+        <div class="belief-title">Reinvention is possible.</div>
+        <div class="belief-sub">I've done it before. I can do it again.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">07</div>
+        <div class="belief-title">Health and sobriety are force multipliers.</div>
+        <div class="belief-sub">Everything else works better when these are in place.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">08</div>
+        <div class="belief-title">Environment builds or wrecks.</div>
+        <div class="belief-sub">Who I spend time with matters enormously.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">09</div>
+        <div class="belief-title">Execution beats potential.</div>
+        <div class="belief-sub">Knowing what to do is worth nothing without follow-through.</div>
+      </div>
+      <div class="belief-item">
+        <div class="belief-num">10</div>
+        <div class="belief-title">My life is becoming something great.</div>
+        <div class="belief-sub">A chosen orientation, not a passive hope.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUARTERLY GOALS -->
+  <div class="goals-grid">
+    <div class="card">
+      <h2>Q1 Goals â JanâMar 2026</h2>
+      <div class="goal-row goal-done">
+        <div class="goal-icon" style="background:rgba(124,186,156,0.15)">&#10003;</div>
+        <div class="goal-info">
+          <div class="goal-name">Find a job</div>
+          <div class="goal-target">Done â Mindful Asset Planning</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(212,185,104,0.15)">&#128170;</div>
+        <div class="goal-info">
+          <div class="goal-name">Go to the gym 10x (revised)</div>
+          <div class="goal-target"><span id="gymQ1Display">7</span> / 10</div>
+          <div class="progress-bar"><div class="progress-fill" id="gymQ1Bar" style="width:70%;background:var(--green)"></div></div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(138,133,128,0.1)">&#128230;</div>
+        <div class="goal-info">
+          <div class="goal-name">Inventory BMW parts &amp; video games</div>
+          <div class="goal-target">Decide keep vs. sell</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(138,133,128,0.1)">&#128468;</div>
+        <div class="goal-info">
+          <div class="goal-name">Clean basement / organize bedroom</div>
+          <div class="goal-target" style="color:var(--green)">â Basement cleaned</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(138,133,128,0.1)">&#128179;</div>
+        <div class="goal-info">
+          <div class="goal-name">Consolidate financial accounts</div>
+          <div class="goal-target">Pushed to April 1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Q2 Goals â AprâJun 2026</h2>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(212,185,104,0.15)">&#127947;</div>
+        <div class="goal-info">
+          <div class="goal-name">Gain muscle / hit 160 lbs</div>
+          <div class="goal-target">By June 2026</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(108,140,191,0.15)">&#128218;</div>
+        <div class="goal-info">
+          <div class="goal-name">Complete CFP Book 2 and Book 3</div>
+          <div class="goal-target">By June 2026</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(124,186,156,0.15)">&#128176;</div>
+        <div class="goal-info">
+          <div class="goal-name">Save $3,000</div>
+          <div class="goal-target">By June 2026</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(155,142,196,0.15)">&#128737;</div>
+        <div class="goal-info">
+          <div class="goal-name">30 days of sobriety</div>
+          <div class="goal-target">No alcohol, no weed during the week</div>
+        </div>
+      </div>
+      <div class="goal-row">
+        <div class="goal-icon" style="background:rgba(212,128,106,0.15)">&#128685;</div>
+        <div class="goal-info">
+          <div class="goal-name">Quit nicotine</div>
+          <div class="goal-target" style="color:var(--green)">â Done â March 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-YEAR VISION -->
+  <div class="card">
+    <h2>3-Year Vision</h2>
+    <div class="vision-grid">
+      <div class="vision-card">
+        <div class="vision-icon">&#127968;</div>
+        <div class="vision-title">Own a Home</div>
+        <div class="vision-detail">Starter home under $250k</div>
+        <div class="vision-accent" style="color:var(--yellow)">~$33k needed by 2030</div>
+      </div>
+      <div class="vision-card">
+        <div class="vision-icon">&#128220;</div>
+        <div class="vision-title">CFP Certified</div>
+        <div class="vision-detail">Pass CFP exam Nov 2026</div>
+        <div class="vision-accent" style="color:var(--accent)">Foundation for wealth advisor career</div>
+      </div>
+      <div class="vision-card">
+        <div class="vision-icon">&#128200;</div>
+        <div class="vision-title">$80k+ Income</div>
+        <div class="vision-detail">Grow at Mindful Asset Planning</div>
+        <div class="vision-accent" style="color:var(--green)">Accelerates house fund &amp; savings</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Clarity &amp; Progress â Built for discipline, not motivation</footer>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- âââââââ PAGE 2 â DAILY ââââââââââââââââââââââââ -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-daily">
+
+  <div class="page-header">
+    <h1>Daily Check-In</h1>
+    <div class="subtitle">Show up. Track it. Learn from it.</div>
+  </div>
+
+  <!-- Date Navigator -->
+  <div class="date-nav">
+    <button onclick="changeDate(-1)">&larr; Yesterday</button>
+    <div class="current-date" id="currentDateDisplay"></div>
+    <button onclick="changeDate(1)">Tomorrow &rarr;</button>
+    <input type="date" id="datePicker" onchange="jumpToDate(this.value)">
+  </div>
+
+  <!-- Yesterday Summary -->
+  <div class="yesterday-summary" id="yesterdaySummary">
+    <h3>Yesterday's Snapshot</h3>
+    <div id="yesterdayContent"><div class="yesterday-empty">No data for yesterday yet.</div></div>
+  </div>
+
+  <!-- Daily Quote -->
+  <div class="daily-quote" id="dailyQuote"></div>
+
+  <!-- Intention -->
+  <div class="intention-box">
+    <label>My Intention for Today</label>
+    <input type="text" class="intention-input" id="dailyIntention" placeholder="What matters most today?">
+  </div>
+
+  <!-- Check-In -->
+  <div class="checkin-grid">
+    <div class="card">
+      <h2>How I'm Showing Up</h2>
+      <div class="metric-row">
+        <label>Mood</label>
+        <div class="rating-selector" id="moodSel"></div>
+      </div>
+      <div class="metric-row">
+        <label>Sleep quality</label>
+        <div class="rating-selector" id="sleepSel"></div>
+      </div>
+      <div class="metric-row">
+        <label>Energy level</label>
+        <div class="rating-selector" id="energySel"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Daily Commitments</h2>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="wokeUp"></div>
+        <div class="chk-label">I am waking up at 7am and starting my morning routine</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="gym"></div>
+        <div class="chk-label">I am building strength at the gym today</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="sober"></div>
+        <div class="chk-label">I am staying sober and clear-headed today</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="nicotine"></div>
+        <div class="chk-label">I am staying nicotine-free today</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="meds"></div>
+        <div class="chk-label">I am taking my medication tonight</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="cooked"></div>
+        <div class="chk-label">I am fueling my body with a meal I cooked</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="ateEnough"></div>
+        <div class="chk-label">I am eating enough to support my mood and training</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="caffeine"></div>
+        <div class="chk-label">I am keeping my caffeine in check</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="piano"></div>
+        <div class="chk-label">I am practicing piano today</div>
+      </div>
+      <div class="checkbox-item" onclick="toggleChk(this)">
+        <div class="chk" data-key="decompress"></div>
+        <div class="chk-label">I am decompressing properly after work</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evening Routine -->
+  <div class="card" style="margin-top:24px">
+    <h2>Evening Reflection</h2>
+    <div style="margin-bottom:16px">
+      <div class="journal-label">3 wins today (no matter how small)</div>
+      <textarea class="journal-area" id="eveningWins" placeholder="1.&#10;2.&#10;3."></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="journal-label">What didn't go well &amp; what I learned</div>
+        <textarea class="journal-area" id="eveningLesson" placeholder="Honest assessment..."></textarea>
+      </div>
+      <div>
+        <div class="journal-label">Am I set up for tomorrow?</div>
+        <div style="padding-top:4px">
+          <div class="checkbox-item" onclick="toggleChk(this)">
+            <div class="chk" data-key="clothesReady"></div>
+            <div class="chk-label">Clothes ready</div>
+          </div>
+          <div class="checkbox-item" onclick="toggleChk(this)">
+            <div class="chk" data-key="mealsPrepped"></div>
+            <div class="chk-label">Meals planned / prepped</div>
+          </div>
+          <div class="checkbox-item" onclick="toggleChk(this)">
+            <div class="chk" data-key="scheduleReviewed"></div>
+            <div class="chk-label">Schedule reviewed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div class="journal-label">What I'm grateful for today</div>
+      <textarea class="journal-area" id="eveningGratitude" style="min-height:80px" placeholder="End the day grounded..."></textarea>
+    </div>
+  </div>
+
+  <!-- Journal -->
+  <div class="card" style="margin-top:24px">
+    <h2>Daily Notes</h2>
+    <textarea class="journal-area" id="dailyJournal" style="min-height:120px" placeholder="Anything else â thoughts, observations, patterns you're noticing..."></textarea>
+  </div>
+
+  <footer>Clarity &amp; Progress â Built for discipline, not motivation</footer>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- âââââââ PAGE 3 â MISC âââââââââââââââââââââââââ -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-misc">
+
+  <div class="page-header">
+    <h1>Misc &amp; Tracking</h1>
+    <div class="subtitle">Finances, social, work â to be expanded</div>
+  </div>
+
+  <div class="checkin-grid">
+    <!-- Finances -->
+    <div class="card">
+      <h2>Finances</h2>
+      <div class="metric-row">
+        <label>Earned this month</label>
+        <input type="number" id="earned" min="0" value="625" step="25" onchange="updateMisc()">
+      </div>
+      <div class="metric-row">
+        <label>Saved this month</label>
+        <input type="number" id="saved" min="0" value="0" step="25" onchange="updateMisc()">
+      </div>
+      <div class="metric-row">
+        <label>Q2 savings total</label>
+        <input type="number" id="totalSaved" min="0" value="0" step="25" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ $3,000</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="savingsBar" style="width:0%;background:var(--green)"></div></div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>Loan paid off this year</label>
+        <input type="number" id="loanPaid" min="0" value="0" step="25" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ $3,000</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="loanBar" style="width:0%;background:var(--red)"></div></div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>House fund</label>
+        <input type="number" id="houseFund" min="0" value="0" step="100" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ $33,000</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="houseBar" style="width:0%;background:var(--yellow)"></div></div>
+    </div>
+
+    <!-- Social -->
+    <div class="card">
+      <h2>Social &amp; Relationships</h2>
+      <div class="metric-row">
+        <label>Hours with friends</label>
+        <input type="number" id="friendHours" min="0" value="0" step="0.5">
+      </div>
+      <div class="metric-row">
+        <label>New social plans made</label>
+        <input type="number" id="socialPlans" min="0" value="0">
+      </div>
+      <div class="metric-row">
+        <label>Who I saw</label>
+        <input type="text" id="whoSaw" value="">
+      </div>
+    </div>
+
+    <!-- Work -->
+    <div class="card">
+      <h2>Work Performance</h2>
+      <div class="metric-row">
+        <label>Self-rating</label>
+        <div class="rating-selector" id="workSel"></div>
+      </div>
+      <div class="metric-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <label>Key wins this week</label>
+        <input type="text" id="workWins" value="" style="width:100%">
+      </div>
+    </div>
+
+    <!-- CFP -->
+    <div class="card">
+      <h2>CFP Study</h2>
+      <div class="metric-row">
+        <label>Study hours this week</label>
+        <input type="number" id="studyHours" min="0" value="3" step="0.5" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ 10</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="studyBar" style="width:30%;background:var(--accent)"></div></div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>Current module</label>
+        <span style="font-size:14px;font-family:-apple-system,sans-serif">1.4 â â Done Â· Finish reading + Mod 1 Quiz this week</span>
+      </div>
+      <div class="metric-row">
+        <label>Gym visits this week</label>
+        <input type="number" id="gymVisits" min="0" max="7" value="0" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ 4</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="gymBar" style="width:0%;background:var(--green)"></div></div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>Q1 gym total</label>
+        <input type="number" id="gymQ1" min="0" value="7" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ 10</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="gymQ1BarMisc" style="width:70%;background:var(--green)"></div></div>
+    </div>
+
+    <!-- Sobriety -->
+    <div class="card">
+      <h2>Sobriety &amp; Nicotine</h2>
+      <div class="metric-row">
+        <label>Current sober streak (days)</label>
+        <input type="number" id="soberStreak" min="0" value="0" onchange="updateMisc()">
+      </div>
+      <div class="metric-row">
+        <label>Longest streak (days)</label>
+        <input type="number" id="longestStreak" min="0" value="2.5" step="0.5" onchange="updateMisc()">
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="soberBar" style="width:0%;background:var(--purple)"></div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;font-family:-apple-system,sans-serif">Goal: 30 days</div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>Nicotine-free streak (days)</label>
+        <input type="number" id="nicStreak" min="0" value="0">
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="card">
+      <h2>Body</h2>
+      <div class="metric-row">
+        <label>Current weight (lbs)</label>
+        <input type="number" id="weight" value="153">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;font-family:-apple-system,sans-serif">Baseline: 153 Â· Q2 Target: 160 lbs Â· Long-term: 170 lbs</div>
+      <div class="metric-row" style="margin-top:8px">
+        <label>Meals cooked this week</label>
+        <input type="number" id="mealsCook" min="0" max="14" value="0" onchange="updateMisc()">
+        <span style="color:var(--muted);font-size:12px">/ 2</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="mealsBar" style="width:0%;background:var(--orange)"></div></div>
+    </div>
+  </div>
+
+  <!-- Seed Yesterday -->
+  <div class="card" style="margin-top:24px;border:1px solid #d4dde8;background:linear-gradient(135deg,#eef3f8,#e8edf5)">
+    <h2 style="color:var(--accent)">Seed Yesterday's Data</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;font-family:-apple-system,sans-serif">Didn't have the new dashboard yesterday? Enter what you remember and it'll show up in today's snapshot.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="journal-label">Mood (1â10)</div>
+        <div class="rating-selector" id="seedMood" style="flex-wrap:wrap;gap:4px"></div>
+        <div class="journal-label" style="margin-top:14px">Sleep quality (1â10)</div>
+        <div class="rating-selector" id="seedSleep" style="flex-wrap:wrap;gap:4px"></div>
+        <div class="journal-label" style="margin-top:14px">Energy (1â10)</div>
+        <div class="rating-selector" id="seedEnergy" style="flex-wrap:wrap;gap:4px"></div>
+      </div>
+      <div>
+        <div class="journal-label">Habits completed yesterday</div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_wokeUp"></div><div class="chk-label">Woke up at 7am</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_gym"></div><div class="chk-label">Built strength at the gym</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_sober"></div><div class="chk-label">Stayed sober</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_nicotine"></div><div class="chk-label">Stayed nicotine-free</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_meds"></div><div class="chk-label">Took medication</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_cooked"></div><div class="chk-label">Cooked a meal</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_ateEnough"></div><div class="chk-label">Ate enough</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_caffeine"></div><div class="chk-label">Caffeine in check</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_piano"></div><div class="chk-label">Practiced piano</div></div>
+        <div class="checkbox-item" onclick="toggleChk(this)"><div class="chk" data-key="seed_decompress"></div><div class="chk-label">Decompressed after work</div></div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div class="journal-label">Wins from yesterday</div>
+      <textarea class="journal-area" id="seedWins" style="min-height:60px" placeholder="1.&#10;2.&#10;3."></textarea>
+    </div>
+    <div style="margin-top:12px;text-align:right">
+      <button class="btn btn-primary" onclick="seedYesterday()">Save Yesterday's Data</button>
+      <span id="seedStatus" style="font-size:12px;color:var(--green);margin-left:12px;opacity:0;transition:opacity 0.3s;font-family:-apple-system,sans-serif"></span>
+    </div>
+  </div>
+
+  <!-- Next Week Priorities -->
+  <div class="card" style="margin-top:24px">
+    <h2>This Week's Priorities â March 23â29</h2>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw1"></div>
+      <div class="chk-label">I am working out 3x this week â closing out Q1 gym goal</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw2"></div>
+      <div class="chk-label">I am waking up at 7am every day and leaving by 8am</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw3"></div>
+      <div class="chk-label">I am taking my medication every night</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw4"></div>
+      <div class="chk-label">I am reflecting each evening and packing for tomorrow</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw5"></div>
+      <div class="chk-label">I am staying sober â no alcohol, no weed</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw6"></div>
+      <div class="chk-label">I am buying nicotine patches to support my quit</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw7"></div>
+      <div class="chk-label">I am eating enough to fuel my body and training</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw8"></div>
+      <div class="chk-label">I am making plans with Clark this week</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw9"></div>
+      <div class="chk-label">I am showing up to work â positive attitude, apologize, gather info</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw10"></div>
+      <div class="chk-label">I am finishing CFP Mod 1 reading + quiz by Sunday</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw11"></div>
+      <div class="chk-label">I am doing my taxes tonight (Monday)</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw12"></div>
+      <div class="chk-label">I am getting X5 tabs + driver's license done this week (lunch break)</div>
+    </div>
+    <div class="checkbox-item" onclick="toggleChk(this)">
+      <div class="chk" data-key="nw13"></div>
+      <div class="chk-label">I am shopping for insurance with MNSure + HR on Tuesday</div>
+    </div>
+  </div>
+
+  <!-- Backup & Restore -->
+  <div class="card" style="margin-top:24px">
+    <h2>Backup &amp; Restore</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;font-family:-apple-system,sans-serif">Export all your data as a JSON file for backup, or restore from a previous backup.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="exportData()">ð¥ Export Data</button>
+      <button class="btn btn-secondary" onclick="importData()">ð¤ Import Data</button>
+      <span id="backupStatus" style="font-size:12px;color:var(--green);align-self:center;opacity:0;transition:opacity 0.3s;font-family:-apple-system,sans-serif"></span>
+    </div>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="handleFileImport(event)">
+  </div>
+
+  <footer>Clarity &amp; Progress â Built for discipline, not motivation</footer>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<!-- âââââââ PAGE 4 â CALENDAR âââââââââââââââââââ -->
+<!-- âââââââââââââââââââââââââââââââââââââââââââââââ -->
+<div class="page" id="page-calendar">
+
+  <div class="page-header">
+    <h1>Weekly Calendar</h1>
+    <div class="subtitle">I am following through on what I planned.</div>
+  </div>
+
+  <!-- Week Navigation -->
+  <div style="display:flex;justify-content:center;gap:16px;margin-bottom:32px;align-items:center">
+    <button class="btn btn-secondary" onclick="calWeekNav(-1)" style="padding:8px 16px">&#8592; Prev</button>
+    <span id="calWeekLabel" style="font-size:16px;font-weight:600;min-width:220px;text-align:center"></span>
+    <button class="btn btn-secondary" onclick="calWeekNav(1)" style="padding:8px 16px">Next &#8594;</button>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="card" style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13px">
+      <thead>
+        <tr id="calHeaderRow" style="border-bottom:2px solid var(--border)">
+          <th style="padding:12px 8px;text-align:left;font-weight:600;color:var(--muted);width:100px">Time</th>
+        </tr>
+      </thead>
+      <tbody id="calBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Daily Schedule Legend -->
+  <div class="card" style="margin-top:24px">
+    <h2>My Daily Template</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;font-family:-apple-system,sans-serif;font-size:14px">
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--light-blue);margin-right:8px"></span>Morning Routine â Gratitude + Meditation</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--accent);margin-right:8px"></span>Work â Mindful Asset Planning</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--green);margin-right:8px"></span>Gym â Strength Training</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orange);margin-right:8px"></span>Dinner + Meal Prep</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--purple);margin-right:8px"></span>CFP Study</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--yellow);margin-right:8px"></span>Evening Reflection + Pack</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--pink);margin-right:8px"></span>Free Time â Pokopia / Piano / Social</div>
+      <div><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--red);margin-right:8px"></span>Wind Down + Medication</div>
+    </div>
+  </div>
+
+  <!-- This Week's Focus -->
+  <div class="card" style="margin-top:24px">
+    <h2>This Week â March 23â29</h2>
+    <div style="margin-top:16px;font-family:-apple-system,sans-serif;font-size:14px;line-height:2">
+      <div>1. I am waking up at 7am and following my morning routine â leave by 8am</div>
+      <div>2. I am working out 3x this week (Mon / Wed / Fri) â 3 more closes Q1</div>
+      <div>3. I am taking my medication every night â Seroquel 15mg, Lamictal 100mg, Lexapro 10mg</div>
+      <div>4. I am eating enough to fuel my body and stabilize my mood â meal prep each evening</div>
+      <div>5. I am staying sober â no alcohol, no weed</div>
+      <div>6. I am buying nicotine patches this week</div>
+      <div>7. I am reflecting each evening and packing for tomorrow</div>
+      <div>8. I am making plans with Clark this week</div>
+      <div>9. I am showing up to work â be positive, apologize for being out, gather information</div>
+      <div>10. I am finishing CFP Mod 1 reading + quiz this week</div>
+      <div>11. I am doing my taxes tonight</div>
+    </div>
+  </div>
+
+  <!-- One-Off Tasks This 2-Week Block -->
+  <div class="card" style="margin-top:24px">
+    <h2>Scheduled Tasks â March 23 to April 5</h2>
+    <div style="margin-top:16px;font-family:-apple-system,sans-serif;font-size:14px;line-height:2.2">
+      <div><strong>Mon 3/23:</strong> Taxes tonight Â· GitHub Pages setup at 8pm (Chrome)</div>
+      <div><strong>MonâFri:</strong> X5 tabs + driver's license â do over lunch or on break this week</div>
+      <div><strong>Tue 3/25:</strong> Insurance shopping â MNSure + HR at work</div>
+      <div><strong>Tue 3/25:</strong> Buy nicotine patches (lunch or after work)</div>
+      <div><strong>By Sun 3/29:</strong> Finish CFP Mod 1 reading + quiz</div>
+      <div><strong>Sat 3/28:</strong> Hang out with Clark</div>
+      <div><strong>Sat 3/29:</strong> Inventory BMW parts + video games</div>
+      <div><strong>Wed 4/1:</strong> Consolidate financial accounts (Lincoln â Schwab rollover)</div>
+    </div>
+  </div>
+</div>
+
+<!-- âââââââ SAVE BAR âââââââ -->
+<div class="save-bar">
+  <button class="btn btn-primary" onclick="saveAll()">Save</button>
+  <button class="btn btn-secondary" onclick="exportFile()">ð¥ Export File</button>
+  <span class="save-status" id="saveStatus">Saved</span>
+</div>
+
+<script>
+// ââ State ââ
+let currentDate = new Date();
+currentDate.setHours(0,0,0,0);
+
+const quotes = [
+  { text: "We do not rise to the level of our goals. We fall to the level of our systems.", attr: "James Clear" },
+  { text: "Discipline is choosing between what you want now and what you want most.", attr: "Abraham Lincoln" },
+  { text: "The pain you feel today is the strength you feel tomorrow.", attr: "Anonymous" },
+  { text: "You are one decision away from a completely different life.", attr: "Mark Batterson" },
+  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", attr: "Chinese Proverb" },
+  { text: "Don't judge each day by the harvest you reap but by the seeds that you plant.", attr: "Robert Louis Stevenson" },
+  { text: "It is not the mountain we conquer, but ourselves.", attr: "Edmund Hillary" },
+  { text: "Progress is not achieved by luck or accident, but by working on yourself daily.", attr: "Jim Rohn" },
+  { text: "Small disciplines repeated with consistency every day lead to great achievements gained slowly over time.", attr: "John C. Maxwell" },
+  { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", attr: "Ralph Waldo Emerson" },
+];
+
+// ââ Tab Switching ââ
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  if (tab === 'daily') renderDaily();
+}
+
+// ââ Date Helpers ââ
+function dateKey(d) { return d.toISOString().split('T')[0]; }
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+function prevDay(d) { const p = new Date(d); p.setDate(p.getDate() - 1); return p; }
+
+function changeDate(offset) {
+  saveDaily();
+  currentDate.setDate(currentDate.getDate() + offset);
+  renderDaily();
+}
+function jumpToDate(val) {
+  saveDaily();
+  const parts = val.split('-');
+  currentDate = new Date(parts[0], parts[1]-1, parts[2]);
+  renderDaily();
+}
+
+// ââ Build Selectors ââ
+function buildRating(containerId, max) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  for (let i = 1; i <= max; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'rating-btn';
+    btn.textContent = i;
+    btn.dataset.value = i;
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      c.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    };
+    c.appendChild(btn);
+  }
+}
+
+function getRating(containerId) {
+  const a = document.getElementById(containerId)?.querySelector('.rating-btn.active');
+  return a ? parseInt(a.dataset.value) : null;
+}
+function setRating(containerId, val) {
+  if (val == null) return;
+  document.getElementById(containerId)?.querySelectorAll('.rating-btn').forEach(b => {
+    if (parseInt(b.dataset.value) === val) b.classList.add('active');
+  });
+}
+
+// ââ Checkbox ââ
+function toggleChk(row) {
+  const chk = row.querySelector('.chk');
+  chk.classList.toggle('checked');
+  row.classList.toggle('is-checked');
+}
+
+function getChecks() {
+  const checks = {};
+  document.querySelectorAll('#page-daily .chk').forEach(c => {
+    checks[c.dataset.key] = c.classList.contains('checked');
+  });
+  return checks;
+}
+function setChecks(data) {
+  if (!data) return;
+  document.querySelectorAll('#page-daily .chk').forEach(c => {
+    const key = c.dataset.key;
+    if (data[key]) {
+      c.classList.add('checked');
+      c.closest('.checkbox-item')?.classList.add('is-checked');
+    } else {
+      c.classList.remove('checked');
+      c.closest('.checkbox-item')?.classList.remove('is-checked');
+    }
+  });
+}
+
+// ââ Daily Save/Load ââ
+function saveDaily() {
+  const key = 'daily_' + dateKey(currentDate);
+  const data = {
+    intention: document.getElementById('dailyIntention')?.value || '',
+    mood: getRating('moodSel'),
+    sleep: getRating('sleepSel'),
+    energy: getRating('energySel'),
+    checks: getChecks(),
+    eveningWins: document.getElementById('eveningWins')?.value || '',
+    eveningLesson: document.getElementById('eveningLesson')?.value || '',
+    eveningGratitude: document.getElementById('eveningGratitude')?.value || '',
+    journal: document.getElementById('dailyJournal')?.value || '',
+  };
+  localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem('daily_latest', dateKey(currentDate));
+}
+
+function loadDaily() {
+  const key = 'daily_' + dateKey(currentDate);
+  const raw = localStorage.getItem(key);
+  // Reset all fields
+  document.getElementById('dailyIntention').value = '';
+  document.querySelectorAll('#page-daily .rating-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#page-daily .chk').forEach(c => { c.classList.remove('checked'); c.closest('.checkbox-item')?.classList.remove('is-checked'); });
+  document.getElementById('eveningWins').value = '';
+  document.getElementById('eveningLesson').value = '';
+  document.getElementById('eveningGratitude').value = '';
+  document.getElementById('dailyJournal').value = '';
+
+  if (!raw) return;
+  const data = JSON.parse(raw);
+  document.getElementById('dailyIntention').value = data.intention || '';
+  setRating('moodSel', data.mood);
+  setRating('sleepSel', data.sleep);
+  setRating('energySel', data.energy);
+  setChecks(data.checks);
+  document.getElementById('eveningWins').value = data.eveningWins || '';
+  document.getElementById('eveningLesson').value = data.eveningLesson || '';
+  document.getElementById('eveningGratitude').value = data.eveningGratitude || '';
+  document.getElementById('dailyJournal').value = data.journal || '';
+}
+
+// ââ Yesterday Summary ââ
+function renderYesterday() {
+  const yd = prevDay(currentDate);
+  const raw = localStorage.getItem('daily_' + dateKey(yd));
+  const container = document.getElementById('yesterdayContent');
+  if (!raw) {
+    container.innerHTML = '<div class="yesterday-empty">No data for yesterday.</div>';
+    return;
+  }
+  const data = JSON.parse(raw);
+  const checks = data.checks || {};
+  const total = Object.keys(checks).length;
+  const done = Object.values(checks).filter(Boolean).length;
+
+  let html = '<div class="yesterday-grid">';
+  html += `<div class="yesterday-stat"><div class="val">${data.mood || 'â'}</div><div class="lbl">Mood</div></div>`;
+  html += `<div class="yesterday-stat"><div class="val">${data.sleep || 'â'}</div><div class="lbl">Sleep</div></div>`;
+  html += `<div class="yesterday-stat"><div class="val">${data.energy || 'â'}</div><div class="lbl">Energy</div></div>`;
+  html += `<div class="yesterday-stat"><div class="val">${done}/${total}</div><div class="lbl">Habits</div></div>`;
+  if (checks.sober) html += `<div class="yesterday-stat"><div class="val" style="color:var(--green)">&#10003;</div><div class="lbl">Sober</div></div>`;
+  if (checks.gym) html += `<div class="yesterday-stat"><div class="val" style="color:var(--green)">&#10003;</div><div class="lbl">Gym</div></div>`;
+  html += '</div>';
+  if (data.eveningWins) {
+    html += `<div style="margin-top:12px;font-size:13px;color:var(--muted);font-family:-apple-system,sans-serif"><strong>Wins:</strong> ${data.eveningWins.replace(/\n/g, ' Â· ')}</div>`;
+  }
+  container.innerHTML = html;
+}
+
+// ââ Daily Quote ââ
+function renderQuote() {
+  const dayNum = Math.floor(currentDate.getTime() / 86400000);
+  const q = quotes[dayNum % quotes.length];
+  document.getElementById('dailyQuote').innerHTML = `"${q.text}"<div class="attr">â ${q.attr}</div>`;
+}
+
+// ââ Render Daily ââ
+function renderDaily() {
+  document.getElementById('currentDateDisplay').textContent = formatDate(currentDate);
+  document.getElementById('datePicker').value = dateKey(currentDate);
+  renderYesterday();
+  renderQuote();
+  loadDaily();
+}
+
+// ââ Misc Progress Bars ââ
+function updateMisc() {
+  const setBar = (id, val, max) => {
+    const el = document.getElementById(id);
+    if (el) el.style.width = Math.min(val / max * 100, 100) + '%';
+  };
+  setBar('savingsBar', parseFloat(document.getElementById('totalSaved')?.value) || 0, 3000);
+  setBar('loanBar', parseFloat(document.getElementById('loanPaid')?.value) || 0, 3000);
+  setBar('houseBar', parseFloat(document.getElementById('houseFund')?.value) || 0, 33000);
+  setBar('studyBar', parseFloat(document.getElementById('studyHours')?.value) || 0, 10);
+  setBar('gymBar', parseInt(document.getElementById('gymVisits')?.value) || 0, 4);
+  setBar('soberBar', parseFloat(document.getElementById('soberStreak')?.value) || 0, 30);
+  setBar('mealsBar', parseInt(document.getElementById('mealsCook')?.value) || 0, 2);
+
+  const gymQ1 = parseInt(document.getElementById('gymQ1')?.value) || 0;
+  setBar('gymQ1BarMisc', gymQ1, 10);
+  // Update vision page too
+  const gymQ1Bar = document.getElementById('gymQ1Bar');
+  if (gymQ1Bar) gymQ1Bar.style.width = Math.min(gymQ1 / 10 * 100, 100) + '%';
+  const gymQ1Disp = document.getElementById('gymQ1Display');
+  if (gymQ1Disp) gymQ1Disp.textContent = gymQ1;
+}
+
+// ââ Save/Load Misc ââ
+function saveMisc() {
+  const data = {};
+  ['earned','saved','totalSaved','loanPaid','houseFund','friendHours','socialPlans','whoSaw',
+   'workWins','studyHours','gymVisits','gymQ1','soberStreak','longestStreak','nicStreak','weight','mealsCook'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  data.workRating = getRating('workSel');
+  localStorage.setItem('misc_data', JSON.stringify(data));
+}
+function loadMisc() {
+  const raw = localStorage.getItem('misc_data');
+  if (!raw) return;
+  const data = JSON.parse(raw);
+  Object.keys(data).forEach(id => {
+    if (id === 'workRating') { setRating('workSel', data[id]); return; }
+    const el = document.getElementById(id);
+    if (el) el.value = data[id];
+  });
+  updateMisc();
+}
+
+// ââ Master Save ââ
+function saveAll() {
+  saveDaily();
+  saveMisc();
+  const s = document.getElementById('saveStatus');
+  s.classList.add('visible');
+  setTimeout(() => s.classList.remove('visible'), 2000);
+}
+
+function newDay() {
+  if (confirm('Start a fresh day? This clears the daily form for today.')) {
+    saveDaily();
+    currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+    renderDaily();
+  }
+}
+
+// ââ Seed Yesterday ââ
+function seedYesterday() {
+  const yesterday = prevDay(new Date());
+  yesterday.setHours(0,0,0,0);
+  const key = 'daily_' + dateKey(yesterday);
+
+  const checks = {};
+  const seedKeys = ['wokeUp','gym','sober','nicotine','meds','cooked','ateEnough','caffeine','piano','decompress'];
+  seedKeys.forEach(k => {
+    const el = document.querySelector(`.chk[data-key="seed_${k}"]`);
+    checks[k] = el ? el.classList.contains('checked') : false;
+  });
+
+  const data = {
+    mood: getRating('seedMood'),
+    sleep: getRating('seedSleep'),
+    energy: getRating('seedEnergy'),
+    checks,
+    eveningWins: document.getElementById('seedWins')?.value || '',
+    intention: '',
+    eveningLesson: '',
+    eveningGratitude: '',
+    journal: '',
+  };
+
+  localStorage.setItem(key, JSON.stringify(data));
+
+  const s = document.getElementById('seedStatus');
+  s.textContent = 'â Saved for ' + yesterday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  s.style.opacity = '1';
+  setTimeout(() => s.style.opacity = '0', 3000);
+
+  renderYesterday();
+}
+
+// ââ Export (Safari file:// compatible) ââ
+function exportFile() {
+  const backup = {
+    exportDate: new Date().toISOString(),
+    daily: {},
+    misc: JSON.parse(localStorage.getItem('misc_data') || '{}'),
+  };
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('daily_')) {
+      const date = key.replace('daily_', '');
+      backup.daily[date] = JSON.parse(localStorage.getItem(key));
+    }
+  }
+
+  const filename = 'charlie-dashboard-backup-' + new Date().toISOString().split('T')[0] + '.json';
+  const json = JSON.stringify(backup, null, 2);
+
+  // Show the export overlay with the JSON and a copy button
+  // This works in Safari on file:// URLs without needing popups or downloads
+  let overlay = document.getElementById('exportOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'exportOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:680px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.18);font-family:-apple-system,sans-serif">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <div style="font-size:17px;font-weight:600;color:#2d2d2d">ð¥ Export Backup</div>
+            <div style="font-size:13px;color:#8a8580;margin-top:2px" id="exportFilename"></div>
+          </div>
+          <button onclick="document.getElementById('exportOverlay').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#8a8580;padding:4px 8px">â</button>
+        </div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Copy all the text below, paste it into a new file in TextEdit, then save it as <strong id="exportFilename2"></strong>.</p>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="exportCopyBtn" onclick="exportCopyToClipboard()" style="background:#6c8cbf;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer">Copy to Clipboard</button>
+          <span id="exportCopyStatus" style="font-size:13px;color:#7cba9c;align-self:center;display:none">â Copied!</span>
+        </div>
+        <textarea id="exportTextarea" readonly style="width:100%;height:220px;font-family:monospace;font-size:11px;border:1px solid #e0dbd4;border-radius:8px;padding:10px;resize:vertical;color:#2d2d2d;background:#faf9f6;outline:none"></textarea>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+
+  document.getElementById('exportFilename').textContent = filename;
+  document.getElementById('exportFilename2').textContent = filename;
+  document.getElementById('exportTextarea').value = json;
+  document.getElementById('exportCopyStatus').style.display = 'none';
+  overlay.style.display = 'flex';
+
+  // Auto-select the textarea text for easy manual copy
+  setTimeout(() => {
+    const ta = document.getElementById('exportTextarea');
+    if (ta) { ta.focus(); ta.select(); }
+  }, 100);
+}
+
+function exportCopyToClipboard() {
+  const ta = document.getElementById('exportTextarea');
+  if (!ta) return;
+  ta.select();
+  try {
+    const ok = document.execCommand('copy');
+    if (ok) {
+      document.getElementById('exportCopyStatus').style.display = 'inline';
+      document.getElementById('exportCopyBtn').textContent = 'â Copied!';
+      setTimeout(() => {
+        document.getElementById('exportCopyBtn').textContent = 'Copy to Clipboard';
+        document.getElementById('exportCopyStatus').style.display = 'none';
+      }, 3000);
+      return;
+    }
+  } catch(e) {}
+  // Modern clipboard API fallback
+  navigator.clipboard && navigator.clipboard.writeText(ta.value).then(() => {
+    document.getElementById('exportCopyStatus').style.display = 'inline';
+    document.getElementById('exportCopyBtn').textContent = 'â Copied!';
+    setTimeout(() => {
+      document.getElementById('exportCopyBtn').textContent = 'Copy to Clipboard';
+      document.getElementById('exportCopyStatus').style.display = 'none';
+    }, 3000);
+  });
+}
+
+function importData() {
+  document.getElementById('importFile').click();
+}
+
+function handleFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const backup = JSON.parse(e.target.result);
+      if (!backup.daily || !backup.misc) throw new Error('Invalid backup format');
+
+      // Restore all daily entries
+      Object.keys(backup.daily).forEach(date => {
+        localStorage.setItem('daily_' + date, JSON.stringify(backup.daily[date]));
+      });
+
+      // Restore misc
+      localStorage.setItem('misc_data', JSON.stringify(backup.misc));
+
+      const s = document.getElementById('backupStatus');
+      s.textContent = 'â Restored ' + file.name;
+      s.style.opacity = '1';
+      setTimeout(() => s.style.opacity = '0', 3000);
+
+      // Reload current page
+      loadMisc();
+      renderDaily();
+    } catch (err) {
+      alert('Error importing backup: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+
+  // Reset file input
+  event.target.value = '';
+}
+
+// ââ Calendar ââ
+let calWeekOffset = 0;
+const calColors = {
+  morning: 'var(--light-blue)', work: 'var(--accent)', gym: 'var(--green)',
+  dinner: 'var(--orange)', cfp: 'var(--purple)', reflection: 'var(--yellow)',
+  free: 'var(--pink)', wind: 'var(--red)', task: '#e8e5df'
+};
+
+function getMonday(d) {
+  const day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.getFullYear(), d.getMonth(), diff);
+}
+
+function calWeekNav(dir) {
+  calWeekOffset += dir;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const mon = getMonday(new Date());
+  mon.setDate(mon.getDate() + calWeekOffset * 7);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate() + i);
+    days.push(d);
+  }
+  const dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const sunEnd = new Date(days[6]);
+  document.getElementById('calWeekLabel').textContent =
+    months[days[0].getMonth()] + ' ' + days[0].getDate() + ' â ' + months[sunEnd.getMonth()] + ' ' + sunEnd.getDate() + ', ' + sunEnd.getFullYear();
+
+  // Header
+  const hRow = document.getElementById('calHeaderRow');
+  hRow.innerHTML = '<th style="padding:12px 8px;text-align:left;font-weight:600;color:var(--muted);width:100px">Time</th>';
+  days.forEach((d, i) => {
+    const isToday = d.toDateString() === new Date().toDateString();
+    hRow.innerHTML += `<th style="padding:12px 8px;text-align:center;font-weight:${isToday?'700':'600'};color:${isToday?'var(--accent)':'var(--text)'}">${dayNames[i]}<br><span style="font-size:11px;color:var(--muted)">${d.getDate()}</span></th>`;
+  });
+
+  // Time slots
+  const slots = [
+    {t:'7:00â8:00', label:'Morning Routine', color:calColors.morning, days:[0,1,2,3,4,5,6]},
+    {t:'8:00â8:30', label:'Commute', color:'#e8e5df', days:[0,1,2,3,4]},
+    {t:'9:00â5:00', label:'Work', color:calColors.work, days:[0,1,2,3,4]},
+    {t:'5:30â6:30', label:'Gym', color:calColors.gym, days:[0,2,4]},
+    {t:'5:30â6:30', label:'Free', color:calColors.free, days:[1,3]},
+    {t:'6:30â7:30', label:'Dinner + Prep', color:calColors.dinner, days:[0,1,2,3,4,5,6]},
+    {t:'7:30â8:00', label:'CFP Study', color:calColors.cfp, days:[0,1,2,3,4]},
+    {t:'8:00â8:30', label:'Reflect + Pack', color:calColors.reflection, days:[0,1,2,3,4,5,6]},
+    {t:'8:30â9:30', label:'Pokopia / Piano', color:calColors.free, days:[0,1,2,3,4,5,6]},
+    {t:'9:30â10:00', label:'Meds + Wind Down', color:calColors.wind, days:[0,1,2,3,4,5,6]}
+  ];
+
+  // One-off tasks by date string
+  const tasks = {};
+  function addTask(y,m,d,t,label) {
+    const key = new Date(y,m-1,d).toDateString();
+    if (!tasks[key]) tasks[key] = [];
+    tasks[key].push({t,label});
+  }
+  addTask(2026,3,23,'7:00','Taxes tonight');
+  addTask(2026,3,23,'8:00','GitHub Pages setup (Chrome)');
+  addTask(2026,3,25,'12:00','Insurance â MNSure + HR');
+  addTask(2026,3,25,'12:30','Buy nicotine patches');
+  addTask(2026,3,25,'12:00','X5 tabs or license (lunch)');
+  addTask(2026,3,28,'10:00','Hang out with Clark');
+  addTask(2026,3,29,'10:00','BMW parts + video games inventory');
+  addTask(2026,3,29,'2:00','CFP Mod 1 Quiz deadline');
+  addTask(2026,4,1,'7:00','Financial account consolidation');
+
+  const body = document.getElementById('calBody');
+  body.innerHTML = '';
+
+  // Render task row first
+  const taskRow = document.createElement('tr');
+  taskRow.style.borderBottom = '1px solid var(--border)';
+  taskRow.innerHTML = '<td style="padding:10px 8px;font-weight:600;color:var(--muted);vertical-align:top;font-size:12px">Tasks</td>';
+  days.forEach(d => {
+    const dayTasks = tasks[d.toDateString()] || [];
+    const html = dayTasks.map(t => `<div style="background:var(--warm-bg);border-left:3px solid var(--accent);padding:4px 6px;margin:2px 0;border-radius:4px;font-size:11px"><strong>${t.t}</strong> ${t.label}</div>`).join('');
+    taskRow.innerHTML += `<td style="padding:6px 4px;vertical-align:top">${html || '<span style="color:var(--muted);font-size:11px">â</span>'}</td>`;
+  });
+  body.appendChild(taskRow);
+
+  // Render schedule rows
+  slots.forEach(slot => {
+    const row = document.createElement('tr');
+    row.style.borderBottom = '1px solid var(--border)';
+    row.innerHTML = `<td style="padding:10px 8px;font-weight:600;color:var(--muted);font-size:12px;white-space:nowrap">${slot.t}</td>`;
+    for (let i = 0; i < 7; i++) {
+      if (slot.days.includes(i)) {
+        row.innerHTML += `<td style="padding:6px 4px"><div style="background:${slot.color};color:#fff;padding:6px 8px;border-radius:6px;text-align:center;font-size:12px;font-weight:600">${slot.label}</div></td>`;
+      } else {
+        row.innerHTML += '<td></td>';
+      }
+    }
+    body.appendChild(row);
+  });
+}
+
+// ââ Init ââ
+buildRating('moodSel', 10);
+buildRating('sleepSel', 10);
+buildRating('energySel', 10);
+buildRating('workSel', 10);
+buildRating('seedMood', 10);
+buildRating('sleepSel', 10);
+buildRating('seedEnergy', 10);
+loadMisc();
+renderDaily();
+renderCalendar();
+</script>
+
+</body>
+</html>
